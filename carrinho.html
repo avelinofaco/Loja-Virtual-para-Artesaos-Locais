@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>Carrinho de Compras</title>
+    <link rel="stylesheet" href="carrinho.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="./img/Logo artesanato(2).png" alt="Logo Artesanato">
+        </div>
+        <nav class="actions">
+            <a href="index.html" class="back-button">
+                <i class="bi bi-arrow-left" aria-label="Voltar para o Catálogo"></i> Voltar ao Catálogo
+            </a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Carrinho de Compras</h1>
+        <section class="cart-items">
+            <article class="cart-item">
+                <img src="./img/carrinho.jpg" alt="Produto 1">
+                <div class="item-details">
+                    <h3>Produto 1</h3>
+                    <p>R$ 50,00</p>
+                    <label for="quantity-1">Quantidade:</label>
+                    <input type="number" id="quantity-1" min="1" value="1">
+                    <button class="remove-item">Remover</button>
+                </div>
+            </article>
+
+            <article class="cart-item">
+                <img src="./img/hospital.jpg" alt="Produto 2">
+                <div class="item-details">
+                    <h3>Produto 2</h3>
+                    <p>R$ 30,00</p>
+                    <label for="quantity-2">Quantidade:</label>
+                    <input type="number" id="quantity-2" min="1" value="1">
+                    <button class="remove-item">Remover</button>
+                </div>
+            </article>
+        </section>
+
+        <section class="cart-summary">
+            <h2>Resumo do Pedido</h2>
+            <p>Total: <strong>R$ 80,00</strong></p>
+            <button class="checkout-button">Finalizar Compra</button>
+        </section>
+    </main>
+</body>
+</html>
