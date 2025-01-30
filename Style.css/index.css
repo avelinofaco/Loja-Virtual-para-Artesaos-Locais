@@ -102,13 +102,26 @@ main {
     font-size: 14px;
 }
 
-.product-card button {
+#button-buy{
+    width: 70%;
+    margin-top: 7px;
     background-color: #7d46d6;
     color: white;
     border: none;
     padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
+}
+#button-car{
+    width: 70%;
+    margin-top: 7px;
+    background-color: #cbc9ce;
+    color: #7d46d6;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 .product-card button:hover {
