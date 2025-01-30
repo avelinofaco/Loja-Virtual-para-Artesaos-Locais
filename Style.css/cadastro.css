@@ -98,3 +98,30 @@ header .actions .back-button:hover {
 .register-container .login-link a:hover {
     text-decoration: underline;
 }
+
+/* Responsive design */
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        text-align: left;
+        padding: 10px;
+    }
+
+    header .logo img {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto;
+    }
+
+    .register-container {
+        width: 90%;
+        margin: 30px auto;
+        padding: 15px;
+    }
+
+    .register-container form input,
+    .register-container form button {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
