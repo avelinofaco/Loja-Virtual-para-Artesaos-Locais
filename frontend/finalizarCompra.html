@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./Style.css/finalizarCompra.css">
+    <title>Checkout</title>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="./img/Logo artesanato(2).png" alt="Logo Artesanato">
+        </div>
+        <h1>Finalizar Compra</h1>
+        <div class="search-bar">
+            <div class="search-container">
+                <input type="text" placeholder="Buscar produto...">
+                <i class="bi bi-search"></i>
+            </div>
+        </div>
+    </header>
+    <main>
+        <form id="checkout-form">
+            <label for="card-number">Número do Cartão:</label>
+            <input type="text" id="card-number" name="card-number" required>
+            
+            <label for="expiry-date">Data de Validade:</label>
+            <input type="text" id="expiry-date" name="expiry-date" required>
+            
+            <label for="cvv">CVV:</label>
+            <input type="text" id="cvv" name="cvv" required>
+            
+            <button type="submit">Realizar Pagamento</button>
+        </form>
+    </main>
+</body>
+</html>
