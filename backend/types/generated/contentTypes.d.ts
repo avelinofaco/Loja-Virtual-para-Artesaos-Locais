@@ -369,6 +369,40 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCartaoCartao extends Struct.CollectionTypeSchema {
+  collectionName: 'cartaos';
+  info: {
+    displayName: 'cartao';
+    pluralName: 'cartaos';
+    singularName: 'cartao';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    cvv: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::cartao.cartao'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    numero: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 13;
+      }>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCategoriaCategoria extends Struct.CollectionTypeSchema {
   collectionName: 'categorias';
   info: {
@@ -392,6 +426,71 @@ export interface ApiCategoriaCategoria extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     produtos: Schema.Attribute.Relation<'oneToMany', 'api::produto.produto'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPedidoItemPedidoItem extends Struct.CollectionTypeSchema {
+  collectionName: 'pedido_items';
+  info: {
+    description: '';
+    displayName: 'pedidoItem';
+    pluralName: 'pedido-items';
+    singularName: 'pedido-item';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::pedido-item.pedido-item'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    pedido: Schema.Attribute.Relation<'manyToOne', 'api::pedido.pedido'>;
+    price: Schema.Attribute.Integer;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPedidoPedido extends Struct.CollectionTypeSchema {
+  collectionName: 'pedidos';
+  info: {
+    description: '';
+    displayName: 'pedido';
+    pluralName: 'pedidos';
+    singularName: 'pedido';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    estatus: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::pedido.pedido'
+    > &
+      Schema.Attribute.Private;
+    pedido_items: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::pedido-item.pedido-item'
+    >;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -944,7 +1043,10 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::cartao.cartao': ApiCartaoCartao;
       'api::categoria.categoria': ApiCategoriaCategoria;
+      'api::pedido-item.pedido-item': ApiPedidoItemPedidoItem;
+      'api::pedido.pedido': ApiPedidoPedido;
       'api::produto.produto': ApiProdutoProduto;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

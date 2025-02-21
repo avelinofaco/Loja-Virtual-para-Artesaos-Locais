@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pedidos",
+  "info": {
+    "singularName": "pedido",
+    "pluralName": "pedidos",
+    "displayName": "pedido",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "estatus": {
+      "type": "string"
+    },
+    "pedido_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::pedido-item.pedido-item",
+      "mappedBy": "pedido"
+    }
+  }
+}

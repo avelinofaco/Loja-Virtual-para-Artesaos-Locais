@@ -120,6 +120,13 @@ nav label {
   color: #333;
 }
 
+.title{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #7d46d6;
+  margin: 20px 0;
+}
 /* Estilo do select */
 #category-select {
   padding: 10px;
@@ -148,7 +155,6 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
 }
 
 #product-list {
@@ -169,64 +175,24 @@ main {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
   transition: transform 0.2s ease-in-out;
-  height: 100%;
+  height: auto;
 }
 
-.product-card:hover {
-  transform: translateY(-5px);
-}
 
 .product-card img {
   width: 100%;
   height: 200px;
   border-radius: 5px;
-  object-fit: cover;
 }
 
 .product-card h3 {
-  font-size: 18px;
+  font-size: 14px;
   margin: 10px 0;
-  font-weight: 600;
+  font-weight: bold;
+  list-style: none;
 }
 
 .product-card p {
-  color: #555;
+  color: #030303;
   font-size: 14px;
-}
-
-.product-card strong {
-  color: #7d46d6;
-  font-size: 16px;
-}
-
-.button-buy {
-  width: 70%;
-  margin-top: 7px;
-  background-color: #7d46d6;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.button-buy:hover {
-  background-color: #8553d6;
-}
-
-.button-car {
-  width: 70%;
-  margin-top: 7px;
-  background-color: #cbc9ce;
-  color: #7d46d6;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.button-car:hover {
-  background-color: #b0a7b8;
 }

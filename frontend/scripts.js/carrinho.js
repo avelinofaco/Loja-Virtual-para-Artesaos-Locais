@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     checkoutButton.addEventListener("click", function () {
         localStorage.removeItem("cart");
-        window.location.href = "index.html";
+        window.location.href = "pagamento.html";
     });
 
     redirectIfNotLoggedIn(); // Verifica se o usuário está logado antes de carregar a página
