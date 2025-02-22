@@ -372,6 +372,7 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
 export interface ApiCartaoCartao extends Struct.CollectionTypeSchema {
   collectionName: 'cartaos';
   info: {
+    description: '';
     displayName: 'cartao';
     pluralName: 'cartaos';
     singularName: 'cartao';
@@ -383,23 +384,23 @@ export interface ApiCartaoCartao extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    cvv: Schema.Attribute.String;
+    cvv: Schema.Attribute.String &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 3;
+      }>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::cartao.cartao'
     > &
       Schema.Attribute.Private;
-    name: Schema.Attribute.String;
-    numero: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 13;
-      }>;
+    nome: Schema.Attribute.String;
+    numero: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    validade: Schema.Attribute.String;
   };
 }
 

@@ -9,11 +9,11 @@
     "develop": "strapi develop",
     "start": "strapi start",
     "strapi": "strapi",
-     "dev": "npm run develop"
+    "dev": "npm run develop"
   },
   "dependencies": {
     "@strapi/plugin-cloud": "5.9.0",
-    "@strapi/plugin-users-permissions": "5.9.0",
+    "@strapi/plugin-users-permissions": "^5.10.3",
     "@strapi/strapi": "5.9.0",
     "better-sqlite3": "11.3.0",
     "react": "^18.0.0",

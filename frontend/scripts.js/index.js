@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", async function () {
   const productContainer = document.querySelector("#product-list");
   const searchInput = document.querySelector('input[type="text"]');
@@ -80,6 +79,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         `;
       productContainer.appendChild(productCard);
     });
+
+    attachEventListeners();
   }
 
   // Função para carregar categorias no select
@@ -93,8 +94,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   }
 
-  renderProducts();
-
   // Carrega as categorias no select
   loadCategories();
 
@@ -105,99 +104,194 @@ document.addEventListener("DOMContentLoaded", async function () {
   });
 
   // Função que verifica se o usuário está logado
-  function checkLogin() {
-    return JSON.parse(localStorage.getItem("loggedUser"));
-  }
-
-  // Função para adicionar o produto ao carrinho
-  function addToCart(product) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.push(product);
-    localStorage.setItem("cart", JSON.stringify(cart));
-    updateCartIcon(cart.length);
-  }
-
-
-  //Função para atualizar o ícone do carrinho
-    function updateCartIcon(count) {
-        if (cartIcon) {
-            cartIcon.setAttribute("data-count", count);
-        }
+    function checkLogin() {
+      return JSON.parse(localStorage.getItem("loggedUser"));
     }
-
-    // Função para manipular o evento de adicionar ao carrinho
-    function handleAddToCart(event) {
-        const loggedUser = checkLogin();
-        if (!loggedUser) {
-            alert("Você precisa estar logado para adicionar produtos ao carrinho.");
-            localStorage.setItem("redirectTo", "index.html");
-            window.location.href = "login.html";
-            return;
-        }
-
-        const productCard = event.target.closest(".product-card");
-        const product = {
-            name: productCard.querySelector("h3 a").innerText,
-            price: productCard.querySelector("p strong").innerText.replace("R$ ", ""),
-            image: productCard.querySelector("img").src
-        };
-
-        addToCart(product);
+  
+    // Função para adicionar o produto ao carrinho
+    function addToCart(product) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push(product);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartIcon(cart.length);
     }
-
-    // Função para manipular o evento de compra imediata
-    function handleBuyNow(event) {
-        const loggedUser = checkLogin();
-        if (!loggedUser) {
-            alert("Você precisa estar logado para comprar.");
-            localStorage.setItem("redirectTo", "index.html");
-            window.location.href = "login.html";
-            return;
-        }
-
-        const productCard = event.target.closest(".product-card");
-        const product = {
-            name: productCard.querySelector("h3 a").innerText,
-            price: productCard.querySelector("p strong").innerText.replace("R$ ", ""),
-            image: productCard.querySelector("img").src
-        };
-
-        addToCart(product);
-        window.location.href = "checkout.html";
-    }
-
-  // Função para filtrar produtos
-  function filterProducts(event) {
-    const searchTerm = event.target.value.toLowerCase();
-    const productCards = document.querySelectorAll(".product-card");
-
-    productCards.forEach((card) => {
-      const productName = card.querySelector("h3 a").innerText.toLowerCase();
-      if (productName.includes(searchTerm)) {
-        card.style.display = "";
-      } else {
-        card.style.display = "none";
+  
+    //Função para atualizar o ícone do carrinho
+      function updateCartIcon(count) {
+          if (cartIcon) {
+              cartIcon.setAttribute("data-count", count);
+          }
       }
-    });
-  }
+  
+      // Função para manipular o evento de adicionar ao carrinho
+      function handleAddToCart(event) {
+          const loggedUser = checkLogin();
+          if (!loggedUser) {
+              alert("Você precisa estar logado para adicionar produtos ao carrinho.");
+              localStorage.setItem("redirectTo", "index.html");
+              window.location.href = "login.html";
+              return;
+          }
+  
+          const productCard = event.target.closest(".product-card");
+          const product = {
+              name: productCard.querySelector("h3 a").innerText,
+              price: productCard.querySelector("p strong").innerText.replace("R$ ", ""),
+              image: productCard.querySelector("img").src
+          };
+  
+          addToCart(product);
+      }
+  
+      // Função para manipular o evento de compra imediata
+      function handleBuyNow(event) {
+          const loggedUser = checkLogin();
+          if (!loggedUser) {
+              alert("Você precisa estar logado para comprar.");
+              localStorage.setItem("redirectTo", "index.html");
+              window.location.href = "login.html";
+              return;
+          }
+  
+          const productCard = event.target.closest(".product-card");
+          const product = {
+              name: productCard.querySelector("h3 a").innerText,
+              price: productCard.querySelector("p strong").innerText.replace("R$ ", ""),
+              image: productCard.querySelector("img").src
+          };
+  
+          addToCart(product);
+          window.location.href = "checkout.html";
+      }
+  
+    // Função para filtrar produtos
+    function filterProducts(event) {
+      const searchTerm = event.target.value.toLowerCase();
+      const productCards = document.querySelectorAll(".product-card");
+  
+      productCards.forEach((card) => {
+        const productName = card.querySelector("h3 a").innerText.toLowerCase();
+        if (productName.includes(searchTerm)) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+  
+    // Adiciona event listeners aos botões
+    function attachEventListeners() {
+      document.querySelectorAll(".button-car").forEach((button) => {
+        button.addEventListener("click", handleAddToCart);
+      });
+  
+      document.querySelectorAll(".button-buy").forEach((button) => {
+        button.addEventListener("click", handleBuyNow);
+      });
+    }
+  
+    // Event listener para filtro
+    searchInput.addEventListener("input", filterProducts);
+  
+    // Renderiza os produtos e atualiza o ícone do carrinho ao carregar a página
+    renderProducts();
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    updateCartIcon(cart.length);
+  });
 
-  // Adiciona event listeners aos botões
-  function attachEventListeners() {
-    document.querySelectorAll(".button-car").forEach((button) => {
-      button.addEventListener("click", handleAddToCart);
-    });
+//   // Função que verifica se o usuário está logado
+//   function checkLogin() {
+//     return JSON.parse(localStorage.getItem("loggedUser"));
+//   }
 
-    document.querySelectorAll(".button-buy").forEach((button) => {
-      button.addEventListener("click", handleBuyNow);
-    });
-  }
+//   // Função para adicionar o produto ao carrinho
+//   function addToCart(product) {
+//     let cart = JSON.parse(localStorage.getItem("cart")) || [];
+//     cart.push(product);
+//     localStorage.setItem("cart", JSON.stringify(cart));
+//     updateCartIcon(cart.length);
+//   }
 
-  // Event listener para filtro
-  searchInput.addEventListener("input", filterProducts);
+//   //Função para atualizar o ícone do carrinho
+//     function updateCartIcon(count) {
+//         if (cartIcon) {
+//             cartIcon.setAttribute("data-count", count);
+//         }
+//     }
 
-  attachEventListeners();
-  // Renderiza os produtos e atualiza o ícone do carrinho ao carregar a página
-  renderProducts();
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  updateCartIcon(cart.length);
-});
+//     // Função para manipular o evento de adicionar ao carrinho
+//     function handleAddToCart(event) {
+//         const loggedUser = checkLogin();
+//         if (!loggedUser) {
+//             alert("Você precisa estar logado para adicionar produtos ao carrinho.");
+//             localStorage.setItem("redirectTo", "index.html");
+//             window.location.href = "login.html";
+//             return;
+//         }
+
+//         const productCard = event.target.closest(".product-card");
+//         const product = {
+//             name: productCard.querySelector("h3 a").innerText,
+//             price: productCard.querySelector("p strong").innerText.replace("R$ ", ""),
+//             image: productCard.querySelector("img").src
+//         };
+
+//         addToCart(product);
+//     }
+
+//     // Função para manipular o evento de compra imediata
+//     function handleBuyNow(event) {
+//         const loggedUser = checkLogin();
+//         if (!loggedUser) {
+//             alert("Você precisa estar logado para comprar.");
+//             localStorage.setItem("redirectTo", "index.html");
+//             window.location.href = "login.html";
+//             return;
+//         }
+
+//         const productCard = event.target.closest(".product-card");
+//         const product = {
+//             name: productCard.querySelector("h3 a").innerText,
+//             price: productCard.querySelector("p strong").innerText.replace("R$ ", ""),
+//             image: productCard.querySelector("img").src
+//         };
+
+//         addToCart(product);
+//         window.location.href = "checkout.html";
+//     }
+
+//   // Função para filtrar produtos
+//   function filterProducts(event) {
+//     const searchTerm = event.target.value.toLowerCase();
+//     const productCards = document.querySelectorAll(".product-card");
+
+//     productCards.forEach((card) => {
+//       const productName = card.querySelector("h3 a").innerText.toLowerCase();
+//       if (productName.includes(searchTerm)) {
+//         card.style.display = "";
+//       } else {
+//         card.style.display = "none";
+//       }
+//     });
+//   }
+
+//   // Adiciona event listeners aos botões
+//   function attachEventListeners() {
+//     document.querySelectorAll(".button-car").forEach((button) => {
+//       button.addEventListener("click", handleAddToCart);
+//     });
+
+//     document.querySelectorAll(".button-buy").forEach((button) => {
+//       button.addEventListener("click", handleBuyNow);
+//     });
+//   }
+
+//   // Event listener para filtro
+//   searchInput.addEventListener("input", filterProducts);
+
+//   attachEventListeners();
+//   // Renderiza os produtos e atualiza o ícone do carrinho ao carregar a página
+//   renderProducts();
+//   const cart = JSON.parse(localStorage.getItem("cart")) || [];
+//   updateCartIcon(cart.length);
+// });

@@ -4,7 +4,8 @@
   "info": {
     "singularName": "cartao",
     "pluralName": "cartaos",
-    "displayName": "cartao"
+    "displayName": "cartao",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -13,13 +14,16 @@
   "attributes": {
     "numero": {
       "type": "string",
-      "required": true,
-      "maxLength": 13
+      "required": true
     },
-    "name": {
+    "nome": {
       "type": "string"
     },
     "cvv": {
+      "type": "string",
+      "maxLength": 3
+    },
+    "validade": {
       "type": "string"
     }
   }
