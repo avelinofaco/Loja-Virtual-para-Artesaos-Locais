@@ -71,8 +71,8 @@ STRAPI
 
 | Entidade| Criação | Leitura | Atualização | Remoção |
 | --- | --- | --- | --- | --- |
-| pedidos   |  X  |  X  |     |            |    X     |
-| produtos  |  X  |  X  |     |             |    X     |
+| pedidos   |  X  |  X  |     |   X        
+| produtos  |  X  |  X  |  X  |  X        
 | Categorias|     |  X  |     |
 
 > Lembre-se que é necessário implementar o CRUD de pelo menos duas entidades.
