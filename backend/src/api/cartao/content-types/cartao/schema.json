@@ -24,7 +24,7 @@
       "maxLength": 3
     },
     "validade": {
-      "type": "string"
+      "type": "date"
     }
   }
 }

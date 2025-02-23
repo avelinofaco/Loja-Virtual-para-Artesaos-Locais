@@ -59,11 +59,11 @@ Aumentar a visibilidade e as oportunidades de negócio para artesãos locais, al
 
 **Frontend:**
 
-Lista as tecnologias, frameworks e bibliotecas utilizados.
+Usamos HTML, CSS e JAVASCRIPT
 
 **Backend:**
 
-Lista as tecnologias, frameworks e bibliotecas utilizados.
+STRAPI
 
 
 ## :shipit: Operações implementadas para cada entidade da aplicação
@@ -71,9 +71,9 @@ Lista as tecnologias, frameworks e bibliotecas utilizados.
 
 | Entidade| Criação | Leitura | Atualização | Remoção |
 | --- | --- | --- | --- | --- |
-| Entidade 1 | X |  X  |  | X |
-| Entidade 2 | X |    |  X | X |
-| Entidade 3 | X |    |  |  |
+| pedidos   |  X  |  X  |     |            |    X     |
+| produtos  |  X  |  X  |     |             |    X     |
+| Categorias|     |  X  |     |
 
 > Lembre-se que é necessário implementar o CRUD de pelo menos duas entidades.
 
@@ -81,5 +81,5 @@ Lista as tecnologias, frameworks e bibliotecas utilizados.
 
 | Método HTTP | URL |
 | --- | --- |
-| GET | api/entidade1/|
-| POST | api/entidade2 |
+| GET | api/pedidos/|
+| POST | api/produtos |
