@@ -1,23 +1,19 @@
-
-document.addEventListener("DOMContentLoaded", loadCartItems); // Carrega os produtos assim que a página carregar
+document.addEventListener("DOMContentLoaded", loadCartItems);
 
 document.getElementById("pay-button").addEventListener("click", function (event) {
-    event.preventDefault(); // Impede o envio do formulário padrão
-    loadCartItems(); // Carrega os itens do carrinho no momento do clique
+    event.preventDefault();
+    loadCartItems();
 
-    // Obtém os valores dos campos do formulário
     const cardNumber = document.getElementById("card-number").value;
     const cardName = document.getElementById("card-name").value;
     const expiryDate = document.getElementById("expiry-date").value;
     const cvv = document.getElementById("cvv").value;
 
-    // Validação simples dos dados
     if (!cardNumber || !cardName || !expiryDate || !cvv) {
         document.getElementById("message").textContent = "Por favor, preencha todos os campos.";
         return;
     }
 
-    // Realizando uma requisição GET para verificar os dados do cartão
     fetch(
         `http://localhost:1337/api/cartaos?numero=${encodeURIComponent(cardNumber)}&nome=${encodeURIComponent(cardName.trim())}`
     )
@@ -32,10 +28,9 @@ document.getElementById("pay-button").addEventListener("click", function (event)
                 let paymentSuccess = false;
     
                 for (const card of data.data) {
-                    // Normaliza os dados antes da comparação
                     const numeroFormatado = card.numero.trim();
-                    const nomeFormatado = card.nome.trim().toLowerCase(); // Ignora maiúsculas e espaços extras
-                    const validadeFormatada = card.validade.trim().replace(/\s/g, ""); // Remove espaços invisíveis
+                    const nomeFormatado = card.nome.trim().toLowerCase();
+                    const validadeFormatada = card.validade.trim().replace(/\s/g, "");
                     const cvvFormatado = card.cvv.trim();
     
                     if (
@@ -76,16 +71,14 @@ document.getElementById("pay-button").addEventListener("click", function (event)
             document.getElementById("message").textContent = "Erro ao processar o pagamento.";
             document.getElementById("message").style.color = "red";
         });
-    
 });
 
-// Função para carregar os produtos do carrinho
 function loadCartItems() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    console.log("Itens do carrinho:", cart); // Log para depuração
+    console.log("Itens do carrinho:", cart);
 
     const productContainer = document.querySelector(".product-details");
-    productContainer.innerHTML = "<h3>Detalhes do Produto</h3>"; // Limpa os detalhes antigos
+    productContainer.innerHTML = "<h3>Detalhes do Produto</h3>";
 
     let totalPrice = 0;
 
@@ -94,8 +87,7 @@ function loadCartItems() {
         return;
     }
 
-    cart.forEach((item) => {
-        // Usa diretamente item.image, pois ele já contém a URL completa
+    cart.forEach((item, index) => {
         const imageUrl = item.image || "https://via.placeholder.com/150";
 
         const productElement = document.createElement("div");
@@ -104,13 +96,26 @@ function loadCartItems() {
             <img src="${imageUrl}" alt="${item.name}">
             <p><strong>Nome:</strong> ${item.name || "Nome indisponível"}</p>
             <p><strong>Preço:</strong> R$ ${(item.price ? parseFloat(item.price).toFixed(2) : "0.00")}</p>
+            <button class="remove-button" data-index="${index}">Remover</button>
         `;
         productContainer.appendChild(productElement);
         totalPrice += parseFloat(item.price || 0);
     });
 
-    // Atualiza o preço total na tela
     const totalPriceElement = document.createElement("p");
     totalPriceElement.innerHTML = `<strong>Total da Compra:</strong> R$ ${totalPrice.toFixed(2)}`;
     productContainer.appendChild(totalPriceElement);
+
+    document.querySelectorAll(".remove-button").forEach((button) => {
+        button.addEventListener("click", function () {
+            removeCartItem(button.getAttribute("data-index"));
+        });
+    });
+}
+
+function removeCartItem(index) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.splice(index, 1);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    loadCartItems();
 }

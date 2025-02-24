@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           };
   
           addToCart(product);
-          window.location.href = "checkout.html";
+          window.location.href = "realizarPag.html";
       }
   
     // Função para filtrar produtos

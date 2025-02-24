@@ -27,29 +27,28 @@ header .search-bar {
 }
 
 .search-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
   position: relative;
   width: 100%;
   max-width: 350px;
 }
-
-.search-container input {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #ddd;
+.sair{
+  width: 30%;
+  background-color: rgb(190, 36, 36);
+  color: white;
+  border: none;
+  padding: 10px 17px;
   border-radius: 5px;
-  font-size: 16px;
+  cursor: pointer;
 }
 
-.search-container i {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #7d46d6;
-  font-size: 18px;
-  pointer-events: none;
+.sair i{
+  display: flex;
+  justify-content: center;
 }
-
 .cart-badge {
   position: absolute;
   top: -5px;
