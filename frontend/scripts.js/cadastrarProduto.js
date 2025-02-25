@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     
         if (!imageResponse.ok) {
           const errorText = await imageResponse.text();
-          throw new Error(`Erro ao enviar imagem: ${errorText}`);
+          // throw new Error(`Erro ao enviar imagem: ${errorText}`);
         }
     
         const imageData = await imageResponse.json();

@@ -1,91 +1,86 @@
-const API_URL = "http://localhost:1337/api";
-const TOKEN = localStorage.getItem(); // Substitua pelo token do admin
-// Função para listar usuários e exibir na tabela
-async function listarUsuarios() {
+const API_URL = 'http://localhost:1337/api/users'; 
+
+// Capturar o formulário e adicionar evento de submit
+document.getElementById('user-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    createUser(username, email, password);
+    this.reset();
+});
+
+// Função para carregar usuários e exibir na tabela
+async function fetchUsers() {
     try {
-        const resposta = await fetch(`${API_URL}/users`, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${TOKEN}`,
-                "Content-Type": "application/json"
-            }
+        const response = await fetch(API_URL);
+        const users = await response.json();
+        const userList = document.getElementById('user-list');
+        userList.innerHTML = '';
+
+        users.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.username}</td>
+                <td>${user.email}</td>
+                <td>
+                    <button onclick="editUser(${user.id})">Editar</button>
+                    <button onclick="deleteUser(${user.id})">Deletar</button>
+                </td>
+            `;
+            userList.appendChild(row);
         });
-        const usuarios = await resposta.json();
-        atualizarTabela(usuarios);
-    } catch (erro) {
-        console.error("Erro ao listar usuários:", erro);
+    } catch (error) {
+        console.error('Erro ao buscar usuários:', error);
     }
 }
 
-// Atualiza a tabela de usuários
-function atualizarTabela(usuarios) {
-    const tabela = document.getElementById("user-list");
-    tabela.innerHTML = "";
-    usuarios.forEach(user => {
-        const linha = document.createElement("tr");
-        linha.innerHTML = `
-            <td>${user.id}</td>
-            <td>${user.username}</td>
-            <td>${user.email}</td>
-            <td>
-                <button onclick="editarUsuario(${user.id}, prompt('Novo nome:', '${user.username}'))">Editar</button>
-                <button onclick="alterarStatusUsuario(${user.id}, ${!user.blocked})">
-                    ${user.blocked ? 'Ativar' : 'Desativar'}
-                </button>
-                <button onclick="removerUsuario(${user.id})">Remover</button>
-            </td>
-        `;
-        tabela.appendChild(linha);
-    });
-}
-
-// Função para editar um usuário
-async function editarUsuario(id, novoNome) {
-    if (!novoNome) return;
+// Função para cadastrar usuário
+async function createUser(username, email, password) {
     try {
-        await fetch(`${API_URL}/users/${id}`, {
-            method: "PUT",
-            headers: {
-                "Authorization": `Bearer ${TOKEN}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ username: novoNome })
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password })
         });
-        listarUsuarios();
-    } catch (erro) {
-        console.error("Erro ao editar usuário:", erro);
+        if (response.ok) fetchUsers();
+    } catch (error) {
+        console.error('Erro ao criar usuário:', error);
     }
 }
 
-// Função para ativar/desativar um usuário
-async function alterarStatusUsuario(id, ativo) {
+// Função para editar usuário
+async function editUser(id) {
+    const newUsername = prompt('Novo nome de usuário:');
+    const newEmail = prompt('Novo email:');
+    if (!newUsername || !newEmail) return;
+
     try {
-        await fetch(`${API_URL}/users/${id}`, {
-            method: "PUT",
-            headers: {
-                "Authorization": `Bearer ${TOKEN}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ blocked: !ativo })
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: newUsername, email: newEmail })
         });
-        listarUsuarios();
-    } catch (erro) {
-        console.error("Erro ao alterar status do usuário:", erro);
+        if (response.ok) fetchUsers();
+    } catch (error) {
+        console.error('Erro ao editar usuário:', error);
     }
 }
 
-// Função para remover um usuário
-async function removerUsuario(id) {
+// Função para deletar usuário
+async function deleteUser(id) {
+    if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+
     try {
-        await fetch(`${API_URL}/users/${id}`, {
-            method: "DELETE",
-            headers: {
-                "Authorization": `Bearer ${TOKEN}`,
-                "Content-Type": "application/json"
-            }
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE'
         });
-        listarUsuarios();
-    } catch (erro) {
-        console.error("Erro ao remover usuário:", erro);
+        if (response.ok) fetchUsers();
+    } catch (error) {
+        console.error('Erro ao deletar usuário:', error);
     }
 }
+
+// Carregar usuários ao carregar a página
+document.addEventListener('DOMContentLoaded', fetchUsers);
