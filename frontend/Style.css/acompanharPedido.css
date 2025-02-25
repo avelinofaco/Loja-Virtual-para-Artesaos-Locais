@@ -126,29 +126,6 @@ nav label {
   color: #7d46d6;
   margin: 20px 0;
 }
-/* Estilo do select */
-#category-select {
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #fff;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-/* Foco no select */
-#category-select:focus {
-  outline: none;
-  border-color: #007bff; /* Cor de borda quando em foco */
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Sombra de foco */
-}
-
-/* Estilo para a opção padrão (Categoria) */
-#category-select option {
-  color: #888;
-  font-style: italic;
-}
 
 main {
   display: flex;

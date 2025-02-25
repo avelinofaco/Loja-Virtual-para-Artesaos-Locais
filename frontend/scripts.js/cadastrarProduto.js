@@ -52,8 +52,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         // Enviar a imagem primeiro
         const imageFormData = new FormData();
         imageFormData.append("files", imageFile);
-    
-        console.log("🔹 Enviando imagem para API...");
+
         const imageResponse = await fetch("http://localhost:1337/api/upload", {
           method: "POST",
           body: imageFormData,
@@ -105,7 +104,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       //funcao editar
     async function editProduct(documentId, product) {
       currentProductId = documentId;
-      editName.value = product.description;
+      editName.value = product.name;
       editPrice.value = product.price;
       editModal.style.display = "flex";
   }

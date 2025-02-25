@@ -56,7 +56,7 @@ document.getElementById("pay-button").addEventListener("click", function (event)
     
                     setTimeout(() => {
                         window.location.href = "acompanharPedidos.html";
-                    }, 1500);
+                    }, 1000);
                 } else {
                     messageElement.textContent = "Erro no pagamento: Dados do cartão não correspondem.";
                     messageElement.style.color = "red";
