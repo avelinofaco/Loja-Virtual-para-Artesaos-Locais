@@ -73,7 +73,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function redirectIfNotLoggedIn() {
         if (!checkLogin()) {
-            alert("Você precisa estar logado para acessar o carrinho.");
             localStorage.setItem("redirectTo", "carrinho.html");
             window.location.href = "login.html";
         }

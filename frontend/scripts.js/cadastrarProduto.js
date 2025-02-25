@@ -12,48 +12,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     let currentProductId = null;
     let currentProductCard = null;
   
-    // ✅ Função para verificar se o usuário tem permissão de acesso
-    async function verificarAcesso() {
-        const token = localStorage.getItem("jwt");
-      
-        if (!token) {
-          alert("Acesso negado! Faça login como artesão.");
-          window.location.href = "login.html";
-          return;
-        }
-      
-        try {
-          const response = await fetch("http://localhost:1337/api/users/me", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-      
-          if (!response.ok) {
-            throw new Error("Falha ao autenticar usuário.");
-          }
-      
-          const usuario = await response.json();
-      
-          if (usuario.role.name !== "artesão") {
-            alert("Acesso restrito! Apenas artesãos podem acessar esta página.");
-            window.location.href = "index.html";
-            return;
-          }
-      
-          // Se o usuário for artesão e estiver acessando a página de login, redirecioná-lo para a tela de cadastro
-          if (window.location.pathname.includes("login.html")) {
-            window.location.href = "cadastro.html"; // Página onde o artesão pode cadastrar produtos
-          }
-      
-        } catch (error) {
-          console.error("Erro ao verificar usuário:", error);
-          window.location.href = "login.html";
-        }
-      }
-      
-    // await verificarAcesso();
-  
 
-    // ✅ Busca produtos do Strapi
+    // Busca produtos do Strapi
     async function fetchProducts() {
       let url = "http://localhost:1337/api/produtos?populate=*";
       try {
@@ -69,45 +29,49 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   
 
-    // ✅ Cadastra um novo produto
+    // Cadastra um novo produto
     productForm.addEventListener("submit", async function (event) {
       event.preventDefault();
-  
+    
       const token = localStorage.getItem("jwt");
       if (!token) {
-        alert("Você precisa estar logado para cadastrar um produto!");
         return;
       }
-  
+    
       const name = document.getElementById("productName").value.trim();
       const price = parseFloat(document.getElementById("productPrice").value);
-      const description = document
-        .getElementById("productDescription")
-        .value.trim();
+      const description = document.getElementById("productDescription").value.trim();
       const imageFile = document.getElementById("productImage").files[0];
-  
+    
       if (!name || !price || !description || !imageFile) {
         alert("Por favor, preencha todos os campos.");
         return;
       }
-  
+    
       try {
-        // 1️⃣ Enviar a imagem primeiro
+        // Enviar a imagem primeiro
         const imageFormData = new FormData();
         imageFormData.append("files", imageFile);
-  
+    
+        console.log("🔹 Enviando imagem para API...");
         const imageResponse = await fetch("http://localhost:1337/api/upload", {
           method: "POST",
           body: imageFormData,
         });
-  
+    
         if (!imageResponse.ok) {
-          throw new Error("Erro ao enviar imagem.");
+          const errorText = await imageResponse.text();
+          throw new Error(`Erro ao enviar imagem: ${errorText}`);
         }
-  
+    
         const imageData = await imageResponse.json();
-        const imageId = imageData[0].id; // Pega o ID da imagem enviada
-  
+    
+        if (!imageData || !imageData[0] || !imageData[0].id) {
+          throw new Error("A resposta da API de upload não contém um ID válido.");
+        }
+    
+        const imageId = imageData[0].id; // Pegando o ID correto da imagem
+    
         // 2️⃣ Agora, cadastrar o produto com a imagem associada
         const productData = {
           data: {
@@ -117,41 +81,37 @@ document.addEventListener("DOMContentLoaded", async function () {
             image: imageId, // Relaciona a imagem enviada ao produto
           },
         };
-  
         const response = await fetch("http://localhost:1337/api/produtos", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Adicionando o token para autenticação
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(productData),
         });
-  
+
         if (!response.ok) {
           const errorResponse = await response.json();
           throw new Error(`Erro ao cadastrar produto: ${errorResponse.error.message}`);
         }
-  
-        alert("Produto cadastrado com sucesso!");
+    
         document.getElementById("productForm").reset();
       } catch (error) {
         console.error("Erro ao cadastrar produto:", error);
-        alert("Erro ao cadastrar produto.");
       }
     });
+    
 
-
-
-                        //funcao editar
+      //funcao editar
     async function editProduct(documentId, product) {
       currentProductId = documentId;
       editName.value = product.description;
       editPrice.value = product.price;
       editModal.style.display = "flex";
   }
-  console.log(currentProductId)
 
   saveChanges.addEventListener("click", async () => {
+    const token = localStorage.getItem("jwt"); 
       if (!currentProductId) return;
 
       const updatedProduct = {
@@ -162,7 +122,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       try {
           const response = await fetch(`http://localhost:1337/api/produtos/${currentProductId}`, {
               method: "PUT",
-              headers: { "Content-Type": "application/json" },
+              headers: { 
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+               },
               body: JSON.stringify({ data: updatedProduct })
           });
 
@@ -170,23 +133,26 @@ document.addEventListener("DOMContentLoaded", async function () {
               throw new Error(`Erro ao atualizar produto: ${response.status}`);
           }
 
-          alert("Produto atualizado com sucesso!");
           editModal.style.display = "none";
           renderProducts();
       } catch (error) {
           console.error("Erro ao editar produto:", error);
-          alert("Erro ao editar produto.");
       }
   });
 
     
                   //funcao deletar
     async function deleteProduct() {
-        if (!currentProductId) return;
+      const token = localStorage.getItem("jwt"); 
+      if (!currentProductId) return;
 
         try {
             const response = await fetch(`http://localhost:1337/api/produtos/${currentProductId}`, {
                 method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`
+                }
             });
 
             if (!response.ok) {
@@ -194,10 +160,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
 
             currentProductCard.remove();
-            alert("Produto excluído com sucesso!");
         } catch (error) {
             console.error("Erro ao deletar produto:", error);
-            alert("Erro ao excluir produto.");
         }
 
         deleteModal.style.display = "none";
@@ -212,7 +176,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     confirmDelete.addEventListener("click", deleteProduct);                   // chama a funcao deleteProduct
 
 
-    // ✅ Fechar modais
+    // Fechar modais
     closeModal.forEach((button) => {
       button.addEventListener("click", () => {
         editModal.style.display = "none";
@@ -220,7 +184,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       });
     });
   
-    // ✅ Renderizar produtos
+    // Renderizar produtos
     async function renderProducts() {
       const products = await fetchProducts();
       productContainer.innerHTML = "";
@@ -249,13 +213,11 @@ document.addEventListener("DOMContentLoaded", async function () {
                   <button class="btn btn-danger delete-btn" data-id="${product.id}">Excluir</button>
               `;
         
-              productCard
-        .querySelector(".edit-btn")
-        .addEventListener("click", () => editProduct(product.id, product));
+              productCard.querySelector(".edit-btn").addEventListener("click", () => editProduct(product.documentId, product));
       productCard
         .querySelector(".delete-btn")
         .addEventListener("click", () =>
-          confirmDeleteProduct(product.id, productCard)
+          confirmDeleteProduct(product.documentId, productCard)
         );
         productContainer.appendChild(productCard);
       });

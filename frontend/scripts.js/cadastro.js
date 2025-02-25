@@ -30,13 +30,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = await response.json();
 
             if (response.ok) {
-                alert("Cadastro realizado com sucesso!");
                 form.reset(); // Limpa o formulário após cadastro
             } else {
                 alert("Erro no cadastro: " + (data.error?.message || "Tente novamente."));
             }
         } catch (error) {
-            alert("Erro ao conectar com o servidor. Tente novamente mais tarde.");
             console.error("Erro:", error);
         }
     });
@@ -53,7 +51,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (!validateEmail(emailValue)) {
-            alert("Por favor, insira um email válido.");
             return false;
         }
 
