@@ -14,12 +14,6 @@
   "attributes": {
     "estatus": {
       "type": "string"
-    },
-    "pedido_items": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::pedido-item.pedido-item",
-      "mappedBy": "pedido"
     }
   }
 }
