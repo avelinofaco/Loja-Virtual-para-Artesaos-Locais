@@ -400,7 +400,7 @@ export interface ApiCartaoCartao extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    usuario: Schema.Attribute.Relation<
+    users_permissions_user: Schema.Attribute.Relation<
       'oneToOne',
       'plugin::users-permissions.user'
     >;
@@ -438,38 +438,6 @@ export interface ApiCategoriaCategoria extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiPedidoItemPedidoItem extends Struct.CollectionTypeSchema {
-  collectionName: 'pedido_items';
-  info: {
-    description: '';
-    displayName: 'pedidoItem';
-    pluralName: 'pedido-items';
-    singularName: 'pedido-item';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    image: Schema.Attribute.String;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::pedido-item.pedido-item'
-    > &
-      Schema.Attribute.Private;
-    name: Schema.Attribute.String;
-    pedido: Schema.Attribute.Relation<'manyToOne', 'api::pedido.pedido'>;
-    price: Schema.Attribute.Decimal;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiPedidoPedido extends Struct.CollectionTypeSchema {
   collectionName: 'pedidos';
   info: {
@@ -485,28 +453,17 @@ export interface ApiPedidoPedido extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    estatus: Schema.Attribute.Enumeration<
-      ['pago', 'pendente', 'enviado', 'cancelado']
-    >;
+    estatus: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::pedido.pedido'
     > &
       Schema.Attribute.Private;
-    pedidoItem: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::pedido-item.pedido-item'
-    >;
     publishedAt: Schema.Attribute.DateTime;
-    totalCompra: Schema.Attribute.Decimal;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    usuario: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
   };
 }
 
@@ -1026,7 +983,6 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
-    pedidos: Schema.Attribute.Relation<'oneToMany', 'api::pedido.pedido'>;
     provider: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
@@ -1058,7 +1014,6 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::cartao.cartao': ApiCartaoCartao;
       'api::categoria.categoria': ApiCategoriaCategoria;
-      'api::pedido-item.pedido-item': ApiPedidoItemPedidoItem;
       'api::pedido.pedido': ApiPedidoPedido;
       'api::produto.produto': ApiProdutoProduto;
       'plugin::content-releases.release': PluginContentReleasesRelease;
