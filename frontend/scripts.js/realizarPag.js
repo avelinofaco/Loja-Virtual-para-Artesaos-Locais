@@ -1,4 +1,50 @@
+
 document.addEventListener("DOMContentLoaded", loadCartItems);
+document.addEventListener("DOMContentLoaded", async () => {
+    console.log("DOM totalmente carregado.");
+    await carregarCartaoDoUsuario();
+    loadCartItems();
+});
+
+async function carregarCartaoDoUsuario() {
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+        console.warn("Usuário não autenticado.");
+        return;
+    }
+
+    try {
+        const usuario = await buscarUsuario(token);
+        if (!usuario) return;
+
+        console.log("Buscando cartão do usuário...");
+        const cartaoResponse = await fetch(
+            `http://localhost:1337/api/cartaos?filters[usuario][id][$eq]=${usuario.id}&populate=*`,
+            {
+                method: "GET",
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
+
+        if (!cartaoResponse.ok) throw new Error("Erro ao buscar cartão do usuário.");
+        const data = await cartaoResponse.json();
+
+        if (data.data.length > 0) {
+            preencherCamposCartao(data.data[0]);
+        } else {
+            console.log("Nenhum cartão encontrado.");
+        }
+    } catch (error) {
+        console.error("Erro ao carregar cartão do usuário:", error);
+    }
+}
+
+function preencherCamposCartao(cartao) {
+    document.getElementById("card-number").value = cartao.numero || "";
+    document.getElementById("card-name").value = cartao.nome || "";
+    document.getElementById("expiry-date").value = cartao.validade || "";
+}
+>>>>>>> parent of 5866721 (Merge branch 'main' of https://github.com/avelinofaco/Loja-Virtual-para-Artesaos-Locais)
 
 document.getElementById("pay-button").addEventListener("click", async function (event) {
     event.preventDefault();
