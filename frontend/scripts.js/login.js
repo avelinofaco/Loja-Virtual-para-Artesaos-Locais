@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
 
@@ -54,57 +55,18 @@ async function verificarAcesso() {
 
         // Redirecionamento conforme a role do usuário
         const roleName = usuario.role.name.toLowerCase();
-        
         if (roleName === "artesao") {
             window.location.href = "cadastrarProduto.html";
-        } else if (roleName === "administrador") {
-            exibirMenuAdministrador();
-        } else {
+
+        }else if (roleName === "administrador") {
+            window.location.href = "cadastrarUsuario.html";
+
+        }
+        else {
             window.location.href = "index.html";
         }
     } catch (error) {
         console.error("Erro ao verificar usuário:", error);
-        window.location.href = "index.html";
+        // window.location.href = "index.html";
     }
 }
-
-function exibirMenuAdministrador() {
-    // Criar o menu apenas se ele não existir
-    if (!document.getElementById("adminMenu")) {
-        const menu = document.createElement("div");
-        menu.id = "adminMenu";
-;
-        const btnCadastrar = document.createElement("button")
-        btnCadastrar.innerText = "Cadastrar Usuario";
-        btnCadastrar.onclick = () => window.location.href = "cadastrarUsuario.html";
-
-        const btnPedidos = document.createElement("button");
-        btnPedidos.innerText = "Gerenciar Pedidos";
-        btnPedidos.onclick = () => window.location.href = "adminPedidos.html";
-
-        const btnFechar = document.createElement("button");
-        btnFechar.id = "btnFechar";
-        btnFechar.innerText = "Fechar";
-        btnFechar.onclick = fecharMenu;
-
-        menu.appendChild(btnCadastrar);
-        menu.appendChild(btnPedidos);
-        menu.appendChild(btnFechar); 
-
-        document.body.appendChild(menu);
-    }
-
-    // Exibir o menu
-    document.getElementById("adminMenu").style.display = "block";
-}
-
-// Função para fechar o menu
-function fecharMenu() {
-    const menu = document.getElementById("adminMenu");
-    if (menu) {
-        menu.style.display = "none";
-    }
-       // Exibir o menu
- document.getElementById("adminMenu").style.display = "block";
-}
-

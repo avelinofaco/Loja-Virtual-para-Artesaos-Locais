@@ -119,6 +119,7 @@ async function deleteUser(id) {
         const result = await response.json();
 
         if (response.ok) {
+            alert('Usuário deletado com sucesso!');
             fetchUsers();
         } else {
             alert(`Erro ao deletar usuário: ${result.error.message}`);
