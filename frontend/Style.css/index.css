@@ -102,6 +102,10 @@ header .actions a:hover {
   font-size: 12px;
 }
 
+#pedidos{
+  font-size: 20px;
+  }
+
 /* Estilo geral para o nav de categorias */
 nav {
   margin-top: 5px;

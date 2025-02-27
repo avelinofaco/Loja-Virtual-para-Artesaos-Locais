@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     
         const imageId = imageData[0].id; // Pegando o ID correto da imagem
     
-        // 2️⃣ Agora, cadastrar o produto com a imagem associada
+        //Agora, cadastrar o produto com a imagem associada
         const productData = {
           data: {
             name: name,
