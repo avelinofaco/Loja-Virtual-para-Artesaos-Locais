@@ -12,29 +12,8 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "totalCompra": {
-      "type": "decimal"
-    },
     "estatus": {
-      "type": "enumeration",
-      "enum": [
-        "pago",
-        "pendente",
-        "enviado",
-        "cancelado"
-      ]
-    },
-    "pedidoItem": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::pedido-item.pedido-item",
-      "mappedBy": "pedido"
-    },
-    "usuario": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "pedidos"
+      "type": "string"
     }
   }
 }

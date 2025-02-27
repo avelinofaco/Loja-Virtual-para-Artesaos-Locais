@@ -1,4 +1,5 @@
 
+document.addEventListener("DOMContentLoaded", loadCartItems);
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM totalmente carregado.");
     await carregarCartaoDoUsuario();
@@ -43,168 +44,74 @@ function preencherCamposCartao(cartao) {
     document.getElementById("card-name").value = cartao.nome || "";
     document.getElementById("expiry-date").value = cartao.validade || "";
 }
+>>>>>>> parent of 5866721 (Merge branch 'main' of https://github.com/avelinofaco/Loja-Virtual-para-Artesaos-Locais)
 
 document.getElementById("pay-button").addEventListener("click", async function (event) {
     event.preventDefault();
+    loadCartItems();
 
-    const token = localStorage.getItem("jwt");
-    if (!token) {
-        mostrarMensagem("Erro: Usuário não autenticado.", "red");
-        return;
-    }
-
-    const cardNumber = document.getElementById("card-number").value.trim();
-    const cardName = document.getElementById("card-name").value.trim();
-    const expiryDate = document.getElementById("expiry-date").value.trim();
-    const cvv = document.getElementById("cvv").value.trim();
+    const cardNumber = document.getElementById("card-number").value;
+    const cardName = document.getElementById("card-name").value;
+    const expiryDate = document.getElementById("expiry-date").value;
+    const cvv = document.getElementById("cvv").value;
 
     if (!cardNumber || !cardName || !expiryDate || !cvv) {
-        mostrarMensagem("Por favor, preencha todos os campos.", "red");
+        document.getElementById("message").textContent = "Por favor, preencha todos os campos.";
         return;
     }
 
     try {
-        const usuario = await buscarUsuario(token);
-        if (!usuario) return;
-
         const response = await fetch(
-            `http://localhost:1337/api/cartaos?filters[numero][$eq]=${encodeURIComponent(cardNumber)}&populate=*`,
-            {
-                method: "GET",
-                headers: { Authorization: `Bearer ${token}` },
-            }
+            `http://localhost:1337/api/cartaos?numero=${encodeURIComponent(cardNumber)}&nome=${encodeURIComponent(cardName.trim())}`
         );
 
         if (!response.ok) throw new Error("Erro na requisição à API");
 
         const data = await response.json();
 
-        let paymentSuccess = false;
-        let cartaoExistente = false;
+        if (data && data.data && data.data.length > 0) {
+            let paymentSuccess = false;
 
-        if (data?.data?.length > 0) {
             for (const card of data.data) {
+                const numeroFormatado = card.numero.trim();
+                const nomeFormatado = card.nome.trim().toLowerCase();
+                const validadeFormatada = card.validade.trim().replace(/\s/g, "");
+                const cvvFormatado = card.cvv.trim();
+
                 if (
-                    card.numero.trim() === cardNumber &&
-                    card.nome.trim().toLowerCase() === cardName.toLowerCase() &&
-                    card.validade.trim().replace(/\s/g, "") === expiryDate.replace(/\s/g, "")
+                    numeroFormatado === cardNumber.trim() &&
+                    nomeFormatado === cardName.trim().toLowerCase() &&
+                    cvvFormatado === cvv.trim() &&
+                    validadeFormatada === expiryDate.replace(/\s/g, "")
                 ) {
-                    cartaoExistente = true;
-                    
-                    if (cvv.length === 3) {
-                        paymentSuccess = true;
-                    } else {
-                        mostrarMensagem("Por favor, insira um CVV válido.", "red");
-                        return;
-                    }
+                    paymentSuccess = true;
                     break;
                 }
             }
-        }
 
-        if (!cartaoExistente) {
-            await salvarCartaoNoStrapi({ cardNumber, cardName, expiryDate, usuario });
-            paymentSuccess = true;
-        }
+            if (paymentSuccess) {
+                document.getElementById("message").textContent = "Pagamento realizado com sucesso!";
+                document.getElementById("message").style.color = "green";
 
-        if (paymentSuccess) {
-            mostrarMensagem("Pagamento realizado com sucesso!", "green");
-            await salvarPedidoNoStrapi();
+                await salvarPedidoNoStrapi();
+
+                setTimeout(() => {
+                    window.location.href = "acompanharPedidos.html";
+                }, 1000);
+            } else {
+                document.getElementById("message").textContent = "Erro no pagamento: Dados do cartão não correspondem.";
+                document.getElementById("message").style.color = "red";
+            }
         } else {
-            mostrarMensagem("Erro no pagamento: Dados do cartão não correspondem.", "red");
+            document.getElementById("message").textContent = "Erro no pagamento: Nenhum cartão cadastrado.";
+            document.getElementById("message").style.color = "red";
         }
     } catch (error) {
-        console.error("Erro ao processar pagamento:", error);
-        mostrarMensagem("Erro ao processar o pagamento.", "red");
+        console.error("Erro:", error);
+        document.getElementById("message").textContent = "Erro ao processar o pagamento.";
+        document.getElementById("message").style.color = "red";
     }
 });
-
-async function buscarUsuario(token) {
-    try {
-        const response = await fetch("http://localhost:1337/api/users/me", {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) throw new Error("Erro ao obter usuário.");
-        return await response.json();
-    } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
-        return null;
-    }
-}
-
-async function salvarCartaoNoStrapi({ cardNumber, cardName, expiryDate, cvv, usuario }) {
-    const token = localStorage.getItem("jwt");
-
-    const cartaoData = {
-        data: {
-            numero: cardNumber,
-            nome: cardName,
-            validade: expiryDate,
-            cvv: cvv,
-            usuario: usuario.id,
-        },
-    };
-
-    try {
-        const response = await fetch("http://localhost:1337/api/cartaos", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(cartaoData),
-        });
-
-        if (!response.ok) {
-            console.error("Erro ao salvar cartão:", await response.text());
-            throw new Error("Erro ao salvar cartão no Strapi.");
-        }
-
-    } catch (error) {
-        console.error("Erro ao salvar cartão no Strapi:", error);
-    }
-}
-
-function mostrarMensagem(texto, cor) {
-    document.getElementById("message").textContent = texto;
-    document.getElementById("message").style.color = cor;
-}
-
-
-async function salvarCartaoNoStrapi({ cardNumber, cardName, expiryDate, cvv, usuario }) {
-    const token = localStorage.getItem("jwt");
-
-    const cartaoData = {
-        data: {
-            numero: cardNumber,
-            nome: cardName,
-            validade: expiryDate,
-            cvv: cvv,
-            usuario: usuario.id,
-        },
-    };
-
-    try {
-        const response = await fetch("http://localhost:1337/api/cartaos", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(cartaoData),
-        });
-
-        if (!response.ok) {
-            console.error("Erro ao salvar cartão:", await response.text());
-            throw new Error("Erro ao salvar cartão no Strapi.");
-        }
-
-    } catch (error) {
-        console.error("Erro ao salvar cartão no Strapi:", error);
-    }
-}
 
 async function salvarPedidoNoStrapi() {
     const token = localStorage.getItem("jwt");
@@ -215,64 +122,35 @@ async function salvarPedidoNoStrapi() {
 
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     if (cart.length === 0) {
-        console.warn("Erro: Carrinho vazio.");
+        console.error("Erro: Carrinho vazio.");
         return;
     }
 
     try {
         const userResponse = await fetch("http://localhost:1337/api/users/me", {
             method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         });
 
         if (!userResponse.ok) throw new Error("Erro ao obter usuário.");
         const usuario = await userResponse.json();
 
-        // Criar os itens do pedido
-        const pedidoItemsIds = await Promise.all(
-            cart.map(async (item) => {
-                const pedidoItemData = {
-                    data: {
-                        name: item.name,
-                        price: parseFloat(item.price),
-                        image: item.image,
-                    },
-                };
-
-                const pedidoItemResponse = await fetch("http://localhost:1337/api/pedido-items", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(pedidoItemData),
-                });
-
-                if (!pedidoItemResponse.ok) {
-                    console.error("Erro ao criar item do pedido:", await pedidoItemResponse.text());
-                    throw new Error("Erro ao criar item do pedido.");
-                }
-
-                const pedidoItem = await pedidoItemResponse.json();
-                return pedidoItem.data.id;
-            })
-        );
-
-        // Criar o pedido
-        function validarEstatus(estatus) {
-            const valoresPermitidos = ["pago", "pendente", "enviado", "Cancelado"];
-            return valoresPermitidos.includes(estatus) ? estatus : "pendente";
-        }
         const pedidoData = {
             data: {
-                estatus: validarEstatus("pendente"), // Aqui você pode passar um valor dinâmico
+                status: "Pendente",
                 totalCompra: cart.reduce((acc, item) => acc + parseFloat(item.price || 0), 0),
-                usuario: usuario.id,
-                pedidoItem: pedidoItemsIds,
+                dataCompra: new Date().toISOString(),
+                usuario: usuario.id, // Relaciona o pedido ao usuário logado
+                pedidoItem: cart.map((item) => ({
+                    name: item.name,
+                    price: item.price,
+                    image: item.image,
+                })),
             },
         };
-        
-        
+
         const pedidoResponse = await fetch("http://localhost:1337/api/pedidos", {
             method: "POST",
             headers: {
@@ -282,22 +160,10 @@ async function salvarPedidoNoStrapi() {
             body: JSON.stringify(pedidoData),
         });
 
-        if (!pedidoResponse.ok) {
-            console.error("Erro ao salvar pedido:", await pedidoResponse.text());
-            throw new Error("Erro ao salvar pedido no Strapi");
-        }
+        if (!pedidoResponse.ok) throw new Error("Erro ao salvar pedido no Strapi");
 
         console.log("Pedido salvo com sucesso!");
-
-        // Limpar carrinho
-        localStorage.removeItem("cart");
-        loadCartItems(); // Atualiza a exibição do carrinho
-
-        // Redirecionamento sem recarregar a página
-        console.log("Redirecionando para 'acompanharPedidos.html'...");
-        setTimeout(() => {
-            window.location.assign("acompanharPedidos.html");
-        }, 1000);
+        localStorage.removeItem("cart"); // Limpa o carrinho após salvar no Strapi
     } catch (error) {
         console.error("Erro ao salvar pedido:", error);
     }
@@ -305,6 +171,7 @@ async function salvarPedidoNoStrapi() {
 
 function loadCartItems() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    console.log("Itens do carrinho:", cart);
 
     const productContainer = document.querySelector(".product-details");
     productContainer.innerHTML = "<h3>Detalhes do Produto</h3>";
@@ -331,26 +198,20 @@ function loadCartItems() {
         totalPrice += parseFloat(item.price || 0);
     });
 
-    productContainer.innerHTML += `<p><strong>Total da Compra:</strong> R$ ${totalPrice.toFixed(2)}</p>`;
+    const totalPriceElement = document.createElement("p");
+    totalPriceElement.innerHTML = `<strong>Total da Compra:</strong> R$ ${totalPrice.toFixed(2)}`;
+    productContainer.appendChild(totalPriceElement);
 
     document.querySelectorAll(".remove-button").forEach((button) => {
         button.addEventListener("click", function () {
             removeCartItem(button.getAttribute("data-index"));
         });
     });
-    function removeCartItem(index) {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    
-        if (index < 0 || index >= cart.length) {
-            console.warn("Índice inválido para remoção.");
-            return;
-        }
-    
-        cart.splice(index, 1); 
-        localStorage.setItem("cart", JSON.stringify(cart)); 
-    
-        loadCartItems(); 
-    }
-    
+}
 
+function removeCartItem(index) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.splice(index, 1);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    loadCartItems();
 }
