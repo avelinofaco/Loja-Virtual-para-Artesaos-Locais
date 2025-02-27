@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("DOM totalmente carregado.");
     await carregarCartaoDoUsuario();
